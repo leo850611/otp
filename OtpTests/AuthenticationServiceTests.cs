@@ -1,4 +1,5 @@
 using System;
+using NSubstitute;
 using OtpLib;
 using Xunit;
 
@@ -9,7 +10,14 @@ namespace OtpTests
         [Fact]
         public void IsValidTest()
         {
-            var target = new AuthenticationService(new StubProfile(), new StubToken());
+            var stubProfile = Substitute.For<IProfile>();
+            stubProfile.GetPassword("joey").Returns("91");
+            
+            var stubToken = Substitute.For<IToken>();
+            stubToken.GetRandom("").ReturnsForAnyArgs("000000");
+            
+            var target = new AuthenticationService(stubProfile,stubToken);
+//            var target = new AuthenticationService(new StubProfile(), new StubToken());
 
             var actual = target.IsValid("joey", "91000000");
             Assert.True(actual);
