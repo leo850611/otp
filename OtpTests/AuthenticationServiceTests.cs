@@ -8,40 +8,43 @@ namespace OtpTests
     public class AuthenticationServiceTests
     {
         [Fact]
-        public void IsValidTest()
+        public void IsValidTest_只有驗證Authentication合法或非法()
         {
-            var stubProfile = Substitute.For<IProfile>();
-            stubProfile.GetPassword("joey").Returns("91");
-            
-            var stubToken = Substitute.For<IToken>();
-            stubToken.GetRandom("").ReturnsForAnyArgs("000000");
-            
-            var target = new AuthenticationService(stubProfile,stubToken);
-//            var target = new AuthenticationService(new StubProfile(), new StubToken());
+            //arrange
+            IProfile profile = Substitute.For<IProfile>();
+            profile.GetPassword("Joey").Returns("91");
 
-            var actual = target.IsValid("joey", "91000000");
-            Assert.True(actual);
+            IToken token = Substitute.For<IToken>();
+            token.GetRandom("Joey").Returns("abc");
+
+            ILog log = Substitute.For<ILog>();
+            AuthenticationService target = new AuthenticationService(profile, token, log);
+            string account = "Joey";
+            string password = "wrong password";
+            // 正確的 password 應為 "91abc"
+
+            //act
+            bool actual;
+            actual = target.IsValid(account, password);
+
+            // assert
+            Assert.False(actual);
         }
-    }
 
-    internal class StubProfile : IProfile
-    {
-        public string GetPassword(string account)
+        [Fact]
+        public void IsValidTest_如何驗證當非法登入時有正確紀錄log()
         {
-            if (account == "joey")
-            {
-                return "91";
-            }
+            // 試著使用 stub object 的 ReturnsForAnyArgs() 方法
+            //例如：profile.GetPassword("").ReturnsForAnyArgs("91"); // 不管GetPassword()傳入任何參數，都要回傳 "91"
 
-            return "";
-        }
-    }
+            // step 1: arrange, 建立 mock object
+            // ILog log = Substitute.For<ILog>();
 
-    internal class StubToken : IToken
-    {
-        public string GetRandom(string account)
-        {
-            return "000000";
-        }
+            // step 2: act
+
+            // step 3: assert, mock object 是否有正確互動
+            //log.Received(1).Save("account:Joey try to login failed"); //Received(1) 可以簡化成 Received()
+
+        }        
     }
 }

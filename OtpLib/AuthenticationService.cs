@@ -7,40 +7,43 @@ namespace OtpLib
     {
         private IProfile _profile;
         private IToken _token;
+        private ILog _log;
 
-        public AuthenticationService(IProfile profile, IToken token)
+        public AuthenticationService(IProfile profile, IToken token, ILog log)
         {
-            _profile = profile;
-            _token = token;
+            this._profile = profile;
+            this._token = token;
+            this._log = log;
         }
 
-        public AuthenticationService()
-        {
-            _profile = new ProfileDao();
-            _token = new RsaTokenDao();
-        }
-
-        public bool IsValid(string account, string passcode)
+        public bool IsValid(string account, string password)
         {
             // 根據 account 取得自訂密碼
-            var passwordFromDao = _profile.GetPassword(account);
+            //var profileDao = new ProfileDao();
+            var passwordFromDao = this._profile.GetPassword(account);
 
             // 根據 account 取得 RSA token 目前的亂數
-            var randomCode = _token.GetRandom(account);
+            //IToken rsaToken = new RsaTokenDao();
+            var randomCode = this._token.GetRandom(account);
 
             // 驗證傳入的 password 是否等於自訂密碼 + RSA token亂數
             var validPassword = passwordFromDao + randomCode;
-            var isValid = passcode == validPassword;
+            var isValid = password == validPassword;
 
-            if (isValid)
+            if (!isValid)
             {
-                return true;
+                // todo, 如何驗證當有非法登入的情況發生時，有正確地記錄log？
+                var content = string.Format("account:{0} try to login failed", account);
+                this._log.Save(content);
             }
-            else
-            {
-                return false;
-            }
+
+            return isValid;
         }
+    }
+
+    public interface ILog
+    {
+        void Save(string message);
     }
 
     public interface IProfile
