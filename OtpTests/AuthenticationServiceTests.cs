@@ -1,4 +1,3 @@
-using System;
 using OtpLib;
 using Xunit;
 
