@@ -1,4 +1,3 @@
-using System;
 using NSubstitute;
 using OtpLib;
 using Xunit;
@@ -24,8 +23,7 @@ namespace OtpTests
             // 正確的 password 應為 "91abc"
 
             //act
-            bool actual;
-            actual = target.IsValid(account, password);
+            var actual = target.IsValid(account, password);
 
             // assert
             Assert.False(actual);
@@ -44,7 +42,6 @@ namespace OtpTests
 
             // step 3: assert, mock object 是否有正確互動
             //log.Received(1).Save("account:Joey try to login failed"); //Received(1) 可以簡化成 Received()
-
-        }        
+        }
     }
 }
