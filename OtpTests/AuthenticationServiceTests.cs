@@ -6,13 +6,13 @@ namespace OtpTests
 {
     public class AuthenticationServiceTests
     {
-        [Fact]
-        public void IsValidTest()
-        {
-            var target = new AuthenticationService();
-
-            var actual = target.IsValid("joey", "91000000");
-            Assert.True(actual);
-        }
+        //[Fact]
+        //public void IsValidTest()
+        //{
+        //    var target = new AuthenticationService();
+      
+        //    var actual = target.IsValid("joey", "91000000");
+        //    Assert.True(actual);
+        //}
     }
 }
