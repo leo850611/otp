@@ -5,16 +5,25 @@ namespace OtpLib
 {
     public class AuthenticationService
     {
+        private IProfileDao _profileDao;
+        private IRsaTokenDao _rsaTokenDao;
+
+        public AuthenticationService(IProfileDao profileDao = null, IRsaTokenDao rsaTokenDao = null)
+        {
+            _profileDao = profileDao ?? new ProfileDao();
+            _rsaTokenDao = rsaTokenDao ?? new RsaTokenDao();
+        }
+
         public bool IsValid(string account, string passcode)
         {
             // 根據 account 取得自訂密碼
-            var profileDao = new ProfileDao();
+            var profileDao = _profileDao;
             var passwordFromDao = profileDao.GetPassword(account);
 
             // 根據 account 取得 RSA token 目前的亂數
-            var rsaToken = new RsaTokenDao();
+            var rsaToken = _rsaTokenDao;
             var randomCode = rsaToken.GetRandom(account);
-            
+
             // 驗證傳入的 password 是否等於自訂密碼 + RSA token亂數
             var validPassword = passwordFromDao + randomCode;
             var isValid = passcode == validPassword;
@@ -29,14 +38,20 @@ namespace OtpLib
             }
         }
     }
-    
-    public class ProfileDao
+
+    public interface IProfileDao
+    {
+        string GetPassword(string account);
+    }
+
+    public class ProfileDao : IProfileDao
     {
         public string GetPassword(string account)
         {
             return Context.GetPassword(account);
         }
     }
+
 
     public static class Context
     {
@@ -55,7 +70,14 @@ namespace OtpLib
         }
     }
 
-    public class RsaTokenDao
+    public interface IRsaTokenDao
+    {
+        string GetRandom(string account);
+    }
+
+
+
+    public class RsaTokenDao : IRsaTokenDao
     {
         public string GetRandom(string account)
         {
