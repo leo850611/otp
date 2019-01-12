@@ -11,14 +11,14 @@ namespace OtpTests
         private FakeHoliday _fakeHoliday = new FakeHoliday();
 
         [Test]
-        public void IsXmas()
+        public void is_xmas()
         {
             GivenToday(2019, 12, 25);
             ResponseShouldEqual("Merry Xmas");
         }
 
         [Test]
-        public void IsNotXmas()
+        public void is_not_xmas()
         {
             GivenToday(2019, 12, 01);
             ResponseShouldEqual("Today is not Xmas");
