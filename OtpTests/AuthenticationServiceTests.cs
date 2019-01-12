@@ -1,15 +1,22 @@
+using NSubstitute;
+using NUnit.Framework;
 using OtpLib;
-using Xunit;
+
 
 namespace OtpTests
 {
     public class AuthenticationServiceTests
     {
-        [Fact]
+        [Test]
         public void IsValidTest()
         {
-            var target = new AuthenticationService(new StubProfile(), new StubToken());
+            var profileDao = Substitute.For<IProfile>();
+            profileDao.GetPassword("joey").Returns("91");
 
+            var rsaTokenDao = Substitute.For<IToken>();
+            rsaTokenDao.GetRandom("").ReturnsForAnyArgs("000000");
+
+            var target = new AuthenticationService(profileDao, rsaTokenDao);
             var actual = target.IsValid("joey", "91000000");
             Assert.True(actual);
         }
