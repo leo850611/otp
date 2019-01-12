@@ -2,28 +2,28 @@
 using System.Collections.Generic;
 using System.Text;
 using OtpLib;
-using Xunit;
+using NUnit.Framework;
 
 namespace OtpTests
 {
     public class HolidayTest
     {
-        [Fact]
+        [Test]
         public void IsXmas()
         {
             var holiday = new FakeHoliday();
             holiday.SetDateTime(new DateTime(2019,12,25));
             var actual = holiday.AskIsTodayXmas();
-            Assert.Equal(actual, "Merry Xmas");
+            Assert.AreEqual(actual, "Merry Xmas");
         }
 
-        [Fact]
+        [Test]
         public void IsNotXmas()
         {
             var holiday = new FakeHoliday();
             holiday.SetDateTime(new DateTime(2019, 12, 20));
             var actual = holiday.AskIsTodayXmas();
-            Assert.Equal(actual, "Today is not Xmas");
+            Assert.AreEqual(actual, "Today is not Xmas");
         }
     }
 
