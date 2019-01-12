@@ -8,37 +8,46 @@ namespace OtpTests
 {
     public class HolidayTest
     {
+        private FakeHoliday _fakeHoliday = new FakeHoliday();
+
         [Test]
         public void IsXmas()
         {
-            var holiday = new FakeHoliday();
-            holiday.SetDateTime(new DateTime(2019,12,25));
-            var actual = holiday.AskIsTodayXmas();
-            Assert.AreEqual(actual, "Merry Xmas");
+            GivenToday(2019, 12, 25);
+            ResponseShouldEqual("Merry Xmas");
         }
 
         [Test]
         public void IsNotXmas()
         {
-            var holiday = new FakeHoliday();
-            holiday.SetDateTime(new DateTime(2019, 12, 20));
-            var actual = holiday.AskIsTodayXmas();
-            Assert.AreEqual(actual, "Today is not Xmas");
+            GivenToday(2019, 12, 01);
+            ResponseShouldEqual("Today is not Xmas");
+        }
+
+        private void ResponseShouldEqual(string merryXmas)
+        {
+            var actual = _fakeHoliday.AskIsTodayXmas();
+            Assert.AreEqual(actual, merryXmas);
+        }
+
+        private void GivenToday(int year, int month, int day)
+        {
+            _fakeHoliday.SetDateTime(new DateTime(year, month, day));
         }
     }
 
 
     public class FakeHoliday : Holiday
     {
-        DateTime date = new DateTime();
+        DateTime _date;
         public void SetDateTime(DateTime d)
         {
-            date = d;
+            _date = d;
         }
 
         protected override DateTime GetDateTime()
         {
-             return date;
+             return _date;
         }
     }
 }
